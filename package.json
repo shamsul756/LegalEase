@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
+    "framer-motion": "^12.40.0",
     "icons": "^1.0.0",
     "lucide": "^1.20.0",
     "lucide-react": "^1.20.0",
