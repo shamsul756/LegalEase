@@ -1,219 +1,152 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import {
-  FaBars,
-  FaTimes,
-  FaSearch,
-  FaChevronDown,
-} from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaThLarge } from "react-icons/fa";
 import Logo from "./Logo";
+
+import { useRouter } from "next/navigation";
+import { authClient, useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // Replace with actual auth state
-  const isLoggedIn = true;
-  const userRole = "lawyer"; // "client" | "lawyer" | "admin"
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const navLink = (href) =>
-    `transition hover:text-blue-600 ${
-      pathname === href
-        ? "text-blue-600 font-semibold"
-        : "text-gray-700"
-    }`;
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.push("/");
+  };
+  // console.log(session);
+
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b shadow-sm">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-        <Logo/>
+    <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/65 backdrop-blur-md py-3.5 px-6">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* LOGO */}
+        <Logo />
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
-            <Link href="/" className={navLink("/")}>
-              Home
-            </Link>
-
-            <Link
-              href="/lawyers"
-              className={navLink("/lawyers")}
-            >
-              Browse Lawyers
-            </Link>
-
-            {/* Dashboard Dropdown */}
-            {isLoggedIn && (
-              <div className="relative">
-                <button
-                  onClick={() =>
-                    setDashboardOpen(!dashboardOpen)
-                  }
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition"
-                >
-                  Dashboard
-                  <FaChevronDown size={12} />
-                </button>
-
-                {dashboardOpen && (
-                  <div className="absolute top-12 left-0 w-52 bg-white border rounded-lg shadow-lg py-2">
-                    {userRole === "client" && (
-                      <Link
-                        href="/dashboard/client"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        Client Dashboard
-                      </Link>
-                    )}
-
-                    {userRole === "lawyer" && (
-                      <Link
-                        href="/dashboard/lawyer"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        Lawyer Dashboard
-                      </Link>
-                    )}
-
-                    {userRole === "admin" && (
-                      <Link
-                        href="/dashboard/admin"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        Admin Dashboard
-                      </Link>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Search Bar */}
-          <div className="hidden md:flex items-center border rounded-lg overflow-hidden bg-gray-50">
-            <input
-              type="text"
-              placeholder="Search lawyer or specialization..."
-              className="px-4 py-2 w-72 outline-none bg-transparent"
-            />
-
-            <button className="px-4 text-blue-600">
-              <FaSearch />
-            </button>
-          </div>
-
-          {/* Auth Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
-            {isLoggedIn ? (
-              <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Login
-              </Link>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenu(!mobileMenu)}
-            className="lg:hidden text-2xl"
+        {/* NAVIGATION LINKS */}
+        <div className="hidden sm:flex items-center gap-8">
+          <Link
+            href="/"
+            className={`text-sm font-medium transition-colors ${pathname === "/" ? "text-pink-500 font-semibold" : "text-slate-300 hover:text-white"}`}
           >
-            {mobileMenu ? <FaTimes /> : <FaBars />}
-          </button>
+            Home
+          </Link>
+          <Link
+            href="/events"
+            className={`text-sm font-medium transition-colors ${pathname.startsWith("/events") ? "text-pink-500 font-semibold" : "text-slate-300 hover:text-white"}`}
+          >
+            Browse  Lawyers
+          </Link>
+          {session && session?.user && (
+            <Link
+              href={`/dashboard/${session?.user?.role}`}
+              className={`text-sm font-medium transition-colors ${pathname.startsWith("/dashboard") ? "text-pink-500 font-semibold" : "text-slate-300 hover:text-white"}`}
+            >
+              Dashboard
+            </Link>
+          )}
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenu && (
-          <div className="lg:hidden border-t py-4">
-            {/* Search */}
-            <div className="flex items-center border rounded-lg overflow-hidden mb-4">
-              <input
-                type="text"
-                placeholder="Search lawyers..."
-                className="flex-1 px-4 py-2 outline-none"
-              />
+        {/* RIGHT ACTIONS */}
+        <div className="flex items-center gap-4">
 
-              <button className="px-4 text-blue-600">
-                <FaSearch />
-              </button>
-            </div>
 
-            <div className="flex flex-col gap-4">
-              <Link
-                href="/"
-                className={navLink("/")}
-              >
-                Home
-              </Link>
-
-              <Link
-                href="/lawyers"
-                className={navLink("/lawyers")}
-              >
-                Browse Lawyers
-              </Link>
-
-              {isLoggedIn && (
-                <>
-                  <p className="font-semibold text-gray-800">
-                    Dashboard
-                  </p>
-
-                  {userRole === "client" && (
-                    <Link
-                      href="/dashboard/client"
-                      className="pl-4 text-gray-600"
-                    >
-                      Client Dashboard
-                    </Link>
-                  )}
-
-                  {userRole === "lawyer" && (
-                    <Link
-                      href="/dashboard/lawyer"
-                      className="pl-4 text-gray-600"
-                    >
-                      Lawyer Dashboard
-                    </Link>
-                  )}
-
-                  {userRole === "admin" && (
-                    <Link
-                      href="/dashboard/admin"
-                      className="pl-4 text-gray-600"
-                    >
-                      Admin Dashboard
-                    </Link>
-                  )}
-                </>
-              )}
-
-              {isLoggedIn ? (
-                <button className="w-fit px-4 py-2 bg-red-500 text-white rounded-lg">
-                  Logout
-                </button>
-              ) : (
-                <Link
-                  href="/login"
-                  className="w-fit px-4 py-2 bg-blue-600 text-white rounded-lg"
+          {!session && (
+            <div className="flex items-center gap-3">
+              <Link href="/login">
+                <button
+                  className="inline-flex items-center justify-center font-semibold text-xs text-slate-300 hover:text-white h-9 px-4 rounded-xl hover:bg-white/5 transition"
                 >
                   Login
-                </Link>
+                </button>
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center font-semibold text-xs bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20 transition h-9 px-4 rounded-xl"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {session && session?.user && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center transition-transform hover:scale-105 outline-none focus:outline-none cursor-pointer"
+              >
+                <Image
+                  width={20}
+                  height={20}
+                  className="w-9 h-9 rounded-full object-cover border border-pink-500 shadow-md shadow-pink-500/10"
+                  src={session?.user?.image}
+                  alt="avatar"
+                />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-3 w-56 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl py-2 z-55 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* User info */}
+                  <div className="px-4 py-2.5 border-b border-white/5 mb-1.5 cursor-default">
+                    <p className="text-[10px] text-pink-400 font-bold uppercase tracking-wider">
+                      {session.user.role} Account
+                    </p>
+                    <p className="font-bold text-white text-sm mt-0.5">{session.user.name}</p>
+                    <p className="text-[11px] text-slate-400 truncate mt-0.5">{session.user.email}</p>
+                  </div>
+
+                  {/* Actions */}
+                  <Link
+                    href="/dashboard/lawer"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition cursor-pointer"
+                  >
+                    <FaThLarge className="text-slate-400 text-sm shrink-0" />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <Link
+                    href={`/dashboard/${session.user.role}`}
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition cursor-pointer"
+                  >
+                    <FaUser className="text-slate-400 text-sm shrink-0" />
+                    <span>Profile Settings</span>
+                  </Link>
+
+                  <div className="border-t border-white/5 my-1.5" />
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition cursor-pointer"
+                  >
+                    <FaSignOutAlt className="text-sm shrink-0 text-red-400" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
               )}
             </div>
-          </div>
-        )}
+          )}
+
+        </div>
       </div>
     </nav>
   );

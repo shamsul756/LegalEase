@@ -1,4 +1,6 @@
+import Appraisals from "@/components/Appraisal";
 import Banner from "@/components/Banner";
+import ExtraSection from "@/components/Extrasection";
 import ServicesFeature from "@/components/ServicesFeature";
 import Stats from "@/components/Stats";
 
@@ -18,6 +20,8 @@ export default function Home() {
 <Banner/>
 <ServicesFeature/>
 <Stats stats={stats}/>
+<ExtraSection/>
+<Appraisals/>
  </div>
   );
 }
