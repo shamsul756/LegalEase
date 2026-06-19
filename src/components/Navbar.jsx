@@ -7,8 +7,9 @@ import { FaUser, FaSignOutAlt, FaThLarge } from "react-icons/fa";
 import Logo from "./Logo";
 
 import { useRouter } from "next/navigation";
-import { authClient, useSession } from "@/lib/auth-client";
+
 import Image from "next/image";
+import { authClient, useSession } from "@/lib/auth-client";
 
 export default function Navbar() {
   const pathname = usePathname();
