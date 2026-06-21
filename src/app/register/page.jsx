@@ -154,8 +154,8 @@ export default function RegisterPage() {
         {...register("role", { required: "Role is required" })}
         className="w-full h-14 rounded-xl bg-slate-900 border border-white/10 text-slate-200 px-4 focus:border-pink-500 outline-none transition-all duration-300 [&>option]:bg-slate-950 [&>option]:text-slate-200"
       >
-        <option value="attendee">User</option>
-        <option value="organizer">Lawyer</option>
+        <option value="guest">User</option>
+        <option value="lawer">Lawyer</option>
       </select>
       {errors.role && (
         <p className="text-red-400 text-sm mt-1">{errors.role.message}</p>
