@@ -29,7 +29,7 @@ const features = [
   },
 ];
 
-export default function WhyChoose() {
+export default function ServicesFeatures() {
   return (
     <section className="py-4 max-w-7xl mx-auto px-6 w-full relative">
 
