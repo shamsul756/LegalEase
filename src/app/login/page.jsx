@@ -9,8 +9,9 @@ import { FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import Logo from "@/components/Logo";
 import { useForm } from "react-hook-form";
 import { redirect } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 const LoginPage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();

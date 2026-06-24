@@ -9,6 +9,9 @@ export const myAppointments = async (email) => {
 // সার্চ ফিল্টার অনুযায়ী সব আইনজীবীদের তালিকা নিয়ে আসার জন্য (Browse/Find Lawyers পেজের জন্য)
 export const fetchLawyers = async (query) => {
   const result = await serverFetch(`/api/lawyers?${query.toString()}`);
+if(!result || !Array.isArray(result) || result == null){
+  return []
+}
   return result;
 };
 

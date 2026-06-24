@@ -1,27 +1,10 @@
-import { baseURL } from '@/lib/api/baseUrl';
-import { stripe } from '@/lib/stripe';
-import { Button, Card, CardFooter, CardHeader } from '@heroui/react';
-import Link from 'next/link';
-import { redirect } from 'next/navigation'
-import { FaArrowRight, FaCheckCircle, FaCrown } from 'react-icons/fa';
+"use client";
 
-export default async function PremiumSuccess({ searchParams }) {
-    const { session_id } = await searchParams;
+import Link from "next/link";
+import { Card, CardHeader, CardContent as CardBody, CardFooter, Button, Spinner } from "@heroui/react";
+import { FaCrown, FaCheckCircle, FaArrowRight } from "react-icons/fa";
 
-    if (!session_id)
-        throw new Error('Please provide a valid session_id (`cs_test_...`)');
-
-    const session = await stripe.checkout.sessions.retrieve(session_id, {
-        expand: ['line_items', 'payment_intent']
-    });
-    
-    console.log(session);
-
-  export default function PremiumButton() {
-  const updateToPremium = async () => {
-    const res = await fetch("/api/checkout_sessions");
-    const data = await res.json();
-  }
+export default function PremiumSuccessPage() {
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center bg-[#080c16] px-6 py-12">
@@ -37,24 +20,25 @@ export default async function PremiumSuccess({ searchParams }) {
                             Upgrade Successful!
                         </h1>
                         <p className="text-slate-400 text-sm mt-1">
-                            {session?.customer_email} You are now a Premium Member.
+                            You are now a Premium Organizer.
                         </p>
                     </CardHeader>
 
-                    <div className="gap-6 bg-slate-900/40 p-6 rounded-2xl border border-white/5 text-center">
+                    <CardBody className="gap-6 bg-slate-900/40 p-6 rounded-2xl border border-white/5 text-center">
                         <div className="space-y-4">
                             <FaCheckCircle className="text-green-500 mx-auto" size={40} />
-                            <h3 className="text-white font-bold text-lg">Premium Legal Access Unlocked</h3>
+                            <h3 className="text-white font-bold text-lg">Unlimited Hosting Unlocked</h3>
                             <p className="text-slate-400 text-xs leading-relaxed max-w-md mx-auto">
-                                All restrictions have been removed from your account! You can now access priority legal consultations, enjoy unlimited case appointments, and track your ongoing legal history seamlessly.
+                                The event limit has been permanently removed from your account. You can now host unlimited events, manage ticket configurations, and track complex ticket sales stats in real time!
                             </p>
                         </div>
-                    </div>
+                    </CardBody>
 
                     <CardFooter className="flex pt-8 justify-center">
-                        {/* আপনার LegalEase প্রজেক্টের ড্যাশবোর্ড পাথ দিন (যেমন: /dashboard) */}
-                        <Link href="/dashboard" className="w-full">
+                        <Link href="/dashboard/guest">
                             <Button
+                                as={Link}
+                                href="/dashboard/guest"
                                 className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-slate-950 font-extrabold h-11 px-8 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/20"
                                 radius="lg"
                                 endContent={<FaArrowRight />}
@@ -67,4 +51,4 @@ export default async function PremiumSuccess({ searchParams }) {
             </Card>
         </div>
     );
-}}
+}

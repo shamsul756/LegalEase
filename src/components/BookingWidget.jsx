@@ -11,7 +11,7 @@ export default function BookingWidget({ ticketPrice, availableSeats, eventId, ev
   const { data: session } = useSession();
 
   const user = session?.user;
-  // console.log(user);
+  console.log(user);
 
 
   const isSoldOut = availableSeats <= 0;

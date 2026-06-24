@@ -1,80 +1,202 @@
+"use client";
 
+import { useState } from "react";
+import { 
+    Card, 
+    CardHeader, 
+    Input, 
+    Textarea, 
+    Form, 
+    Button, 
+    Select, 
+    SelectItem 
+} from "@heroui/react";
+import toast from "react-hot-toast";
 
 const AddEventForm = () => {
-    const CATEGORIES = ["Music", "Tech", "Sports", "Arts", "Business", "Food", "Other"];
-    const LOCATIONS = ["New York", "San Francisco", "London", "Dhaka", "Tokyo", "Berlin", "Online"];
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // ⚖️ লিগ্যাল প্রজেক্টের প্রয়োজনীয় ক্যাটাগরি লিস্ট
+    const LEGAL_CATEGORIES = [
+        "Criminal Law",
+        "Corporate Law",
+        "Family Law",
+        "Civil Litigation",
+        "Intellectual Property",
+        "Labor & Employment",
+        "Tax Law",
+        "Real Estate Law"
+    ];
+
+    // 📍 বাংলাদেশের প্রধান লোকেশন এবং অনলাইন অপশন
+    const LOCATIONS = [
+        "Dhaka", 
+        "Chittagong", 
+        "Sylhet", 
+        "Rajshahi", 
+        "Khulna", 
+        "Barisal", 
+        "Rangpur", 
+        "Mymensingh", 
+        "Online / Remote"
+    ];
+
+    const handleSubmitEvent = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        try {
+            const formData = new FormData(e.currentTarget);
+            const eventData = Object.fromEntries(formData.entries());
+
+            console.log("Created Legal Event Data: ", eventData);
+            
+            // এখানে ব্যাকএন্ড এপিআই অ্যাকশন কল হবে:
+            // const res = await createLegalEvent(eventData);
+
+            toast.success("Legal seminar/event hosted successfully!");
+            e.currentTarget.reset();
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to host the event!");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
-        <div className="mt-6 max-w-3xl">
-            <Card className="border border-white/5 bg-slate-900/40 backdrop-blur-xl shadow-2xl rounded-2xl" radius="lg">
-                <CardHeader className="flex flex-col gap-1 pb-4 border-b border-white/5 p-6">
-                    <h3 className="text-xl font-bold text-white">Host a New Event</h3>
-                    <p className="text-slate-400 text-xs">Fill out the detailed event information. Banners and dates are required.</p>
+        <div className="mt-6 max-w-3xl mx-auto w-full">
+            <Card className="border border-white/5 bg-slate-900/40 backdrop-blur-xl shadow-2xl rounded-2xl p-2">
+                <CardHeader className="flex flex-col gap-1 pb-4 border-b border-white/5 p-6 items-start">
+                    <h3 className="text-xl font-bold text-white">Host a New Legal Event / Seminar</h3>
+                    <p className="text-slate-400 text-xs">Fill out the detailed event information. Banners and dates are required for client visibility.</p>
                 </CardHeader>
+                
                 <div className="p-6">
-                    <Form className="space-y-4 w-full">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            <Input label="Event Title" labelPlacement="outside" placeholder="e.g. Rock Fest 2026" required className="w-full bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500" />
-                            <Input label="Banner Image URL" labelPlacement="outside" placeholder="https://images.unsplash.com/..." required className="w-full bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500" />
+                    <Form onSubmit={handleSubmitEvent} className="space-y-5 w-full flex flex-col">
+                        
+                        {/* Event Title + Banner URL */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                            <Input 
+                                name="title"
+                                label="Event / Seminar Title" 
+                                labelPlacement="outside" 
+                                placeholder="e.g. Corporate Tax Law Workshop 2026" 
+                                required 
+                                variant="bordered"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 h-12 text-white" }}
+                            />
+                            <Input 
+                                name="bannerUrl"
+                                label="Banner Image URL" 
+                                labelPlacement="outside" 
+                                placeholder="https://images.unsplash.com/..." 
+                                required 
+                                variant="bordered"
+                                type="url"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 h-12 text-white" }}
+                            />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            <div className="flex flex-col gap-2 w-full">
-                                <Select
-                                    id="event-category"
-                                    aria-label="Category"
-                                    placeholder="Select Category"
-                                    className="w-full"
-                                >
-                                    <SelectTrigger className="w-full flex items-center justify-between bg-slate-900/50 border border-white/10 rounded-xl px-3 h-11 text-white text-sm">
-                                        <SelectValue />
-                                        <SelectIndicator />
-                                    </SelectTrigger>
-                                    <SelectPopover className="bg-slate-950 border border-white/10 rounded-xl shadow-2xl p-1 min-w-[200px]">
-                                        <ListBox className="outline-none">
-                                            {CATEGORIES.map((cat) => <ListBoxItem key={cat} id={cat} textValue={cat} className="p-2 text-white hover:bg-pink-500/20 rounded-lg cursor-pointer">{cat}</ListBoxItem>)}
-                                        </ListBox>
-                                    </SelectPopover>
-                                </Select>
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <Select
-                                    id="event-location"
-                                    aria-label="Location"
-                                    placeholder="Select Location"
-                                    className="w-full"
-                                >
-                                    <SelectTrigger className="w-full flex items-center justify-between bg-slate-900/50 border border-white/10 rounded-xl px-3 h-11 text-white text-sm">
-                                        <SelectValue />
-                                        <SelectIndicator />
-                                    </SelectTrigger>
-                                    <SelectPopover className="bg-slate-950 border border-white/10 rounded-xl shadow-2xl p-1 min-w-[200px]">
-                                        <ListBox className="outline-none">
-                                            {LOCATIONS.map((loc) => <ListBoxItem key={loc} id={loc} textValue={loc} className="p-2 text-white hover:bg-pink-500/20 rounded-lg cursor-pointer">{loc}</ListBoxItem>)}
-                                        </ListBox>
-                                    </SelectPopover>
-                                </Select>
-                            </div>
+
+                        {/* Legal Category + Location */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                            <Select
+                                name="category"
+                                label="Legal Practice Area / Category"
+                                labelPlacement="outside"
+                                placeholder="Select Category"
+                                required
+                                variant="bordered"
+                                classNames={{ trigger: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 h-12 text-white" }}
+                                popoverProps={{ classNames: { content: "bg-slate-950 border border-white/10 text-white" } }}
+                            >
+                                {LEGAL_CATEGORIES.map((cat) => (
+                                    <SelectItem key={cat} value={cat} className="hover:bg-pink-500/20 text-white">
+                                        {cat}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+
+                            <Select
+                                name="location"
+                                label="Venue / Location"
+                                labelPlacement="outside"
+                                placeholder="Select Location"
+                                required
+                                variant="bordered"
+                                classNames={{ trigger: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 h-12 text-white" }}
+                                popoverProps={{ classNames: { content: "bg-slate-950 border border-white/10 text-white" } }}
+                            >
+                                {LOCATIONS.map((loc) => (
+                                    <SelectItem key={loc} value={loc} className="hover:bg-pink-500/20 text-white">
+                                        {loc}
+                                    </SelectItem>
+                                ))}
+                            </Select>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                            <div className="flex flex-col gap-2 w-full">
-                                <Input id="event-date" type="date" label="Date" labelPlacement="outside" required className="w-full bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500" />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <Input id="event-price" type="number" min={0} step="any" label="Ticket Price ($)" labelPlacement="outside" placeholder="0.00" required className="w-full bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500" />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <Input id="event-seats" type="number" min={1} label="Available Capacity" labelPlacement="outside" placeholder="100" required className="w-full bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500" />
-                            </div>
+
+                        {/* Date + Price + Capacity */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                            <Input 
+                                name="date"
+                                type="date" 
+                                label="Event Date" 
+                                labelPlacement="outside" 
+                                required 
+                                variant="bordered"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 h-12 text-white" }}
+                            />
+                            <Input 
+                                name="price"
+                                type="number" 
+                                min={0} 
+                                step="any" 
+                                label="Registration Fee ($)" 
+                                labelPlacement="outside" 
+                                placeholder="0.00 (Leave 0 if free)" 
+                                required 
+                                variant="bordered"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 h-12 text-white" }}
+                            />
+                            <Input 
+                                name="capacity"
+                                type="number" 
+                                min={1} 
+                                label="Max Attendees / Capacity" 
+                                labelPlacement="outside" 
+                                placeholder="50" 
+                                required 
+                                variant="bordered"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 h-12 text-white" }}
+                            />
                         </div>
-                        <div className="flex flex-col gap-2 w-full">
-                            <TextArea id="event-desc" label="Detailed Description" labelPlacement="outside" placeholder="Outline the detailed schedule, speaker list, and amenities..." required className="w-full bg-slate-900/50 border border-white/10 rounded-xl focus:outline-none min-h-[120px] text-white text-sm" />
+
+                        {/* Detailed Description */}
+                        <div className="w-full">
+                            <Textarea 
+                                name="description"
+                                label="Detailed Event Overview & Agenda" 
+                                labelPlacement="outside" 
+                                placeholder="Outline the legal discussion topics, key takeaways, and speaker details..." 
+                                required 
+                                variant="bordered"
+                                classNames={{ inputWrapper: "bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500 min-h-[120px] text-white" }}
+                            />
                         </div>
-                        <Button type="submit" className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-bold h-11 px-6 shadow-lg shadow-pink-500/10" radius="lg">Host Event Now</Button>
+
+                        <Button 
+                            type="submit" 
+                            isLoading={isSubmitting}
+                            className="bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-bold h-12 px-8 shadow-lg shadow-pink-500/20 self-start mt-2" 
+                            radius="lg"
+                        >
+                            Publish Legal Event
+                        </Button>
                     </Form>
                 </div>
             </Card>
         </div>
-    )
-}
+    );
+};
 
 export default AddEventForm;

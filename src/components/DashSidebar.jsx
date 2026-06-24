@@ -16,7 +16,6 @@ const lawerMenu = [
   // Changed href from /dashboard/lawerBoard to /dashboard to match your main layout dashboard entry
   { key: "overview", label: "Overview", icon: FaUsers, href: "/dashboard/lawer/overview" }, 
   { key: "lawers", label: "Lawers", icon: FaBuilding, href: "/dashboard/lawer" },
-  { key: "add-event", label: "Add Event", icon: FaPlus, href: "/dashboard/lawer/add-event" },
   // Changed href from manage-events to manage-event to match your actual folder name
   { key: "manage-events", label: "Manage Events", icon: FaCalendarAlt, href: "/dashboard/lawer/manage-event" }, 
   { key: "guest", label: "Guest", icon: FaUsers, href: "/dashboard/lawerInfo/guest" },

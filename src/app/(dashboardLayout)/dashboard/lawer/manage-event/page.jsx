@@ -1,9 +1,8 @@
-import { auth } from "@/lib/auth";
+
 import { headers } from "next/headers";
-import { Suspense } from "react";
-import { Spinner } from "@heroui/react";
 import DashHeader from "@/components/DashHeader";
-import ManageLegalRecordsClient from "./manage-event-client";
+import ManageLegalRecordsClient from "./manage-legal-records-client"; // পাথ ঠিক করা হয়েছে
+import { auth } from "@/lib/auth";
 
 const ManageLegalRecords = async () => {
     const session = await auth.api.getSession({
@@ -12,8 +11,7 @@ const ManageLegalRecords = async () => {
 
     let records = [];
     try {
-        // 🔗 আপনার ব্যাকএন্ড API রুট বা ফাংশনটি এখানে কল করুন 
-        // উদাহরণ: (আপনার বেস ইউআরএল এনভায়রনমেন্ট ভ্যারিয়েবল থেকে নেওয়া ভালো)
+        // রিকোয়ারমেন্ট অনুযায়ী লাইভ সার্ভার ফেচিং ইউআরএল
         const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments?email=${session?.user?.email}`, {
             cache: 'no-store'
         });
@@ -27,14 +25,12 @@ const ManageLegalRecords = async () => {
     return (
         <div>
             <DashHeader
-                title="Manage Appointments"
-                description="Review, update, or cancel your client legal consultations and requests."
+                title="Hiring History & Requests"
+                description="Review, accept, or reject legal consultation requests from your clients."
             />
             
-            <Suspense fallback={<div className="flex justify-center p-10"><Spinner color="pink" /></div>}>
-                {/* 🎯 এখানে records প্রপ্স আকারে পাস করা হলো */}
-                <ManageLegalRecordsClient records={records} />
-            </Suspense>
+            {/* ডাটা ফেচিং যেহেতু ওপরেই await হচ্ছে, তাই এখানে সরাসরি কম্পোনেন্ট রেন্ডার করাই নিরাপদ */}
+            <ManageLegalRecordsClient records={records} />
         </div>
     );
 };
